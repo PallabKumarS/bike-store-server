@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { BikeService } from './bike.service';
 import { bikeValidationSchema } from './bike.validation';
@@ -6,19 +7,16 @@ import { bikeValidationSchema } from './bike.validation';
 const createBike = async (req: Request, res: Response) => {
   try {
     const { bike } = req.body;
-    const {
-      //  error,
-      value,
-    } = bikeValidationSchema.validate(bike);
+    const { error, value } = bikeValidationSchema.validate(bike);
 
     // error handling
-    // if (error) {
-    //   return res.status(500).json({
-    //     success: false,
-    //     message: 'Validation failed',
-    //     error: error.details,
-    //   });
-    // }
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Validation failed',
+        error: error.details,
+      });
+    }
 
     const result = await BikeService.createBikeIntoDB(value);
     res.status(200).json({
@@ -26,12 +24,21 @@ const createBike = async (req: Request, res: Response) => {
       message: 'Bike is created successfully',
       data: result,
     });
-  } catch (error) {
-    console.log(error);
-    // return res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+  } catch (err: any) {
+    const errorResponse: any = {
+      success: false,
+      message: (err.message = 'Something went wrong'),
+      error: {
+        issues: err.issues || [],
+        name: err.name || 'Error',
+      },
+    };
+
+    if (err.stack) {
+      errorResponse.stack = err.stack;
+    }
+
+    res.status(500).json(errorResponse);
   }
 };
 
@@ -47,12 +54,11 @@ const getAllBike = async (req: Request, res: Response) => {
       success: true,
       data: result,
     });
-  } catch (error) {
-    console.log(error);
-    // return res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -66,12 +72,11 @@ const getSingleBike = async (req: Request, res: Response) => {
       message: 'Bike is retrieved successfully',
       data: result,
     });
-  } catch (error) {
-    console.log(error);
-    // return res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -86,12 +91,11 @@ const updateBike = async (req: Request, res: Response) => {
       message: 'Bike is retrieved successfully',
       data: result,
     });
-  } catch (error) {
-    console.log(error);
-    // return res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
@@ -105,12 +109,11 @@ const deleteBike = async (req: Request, res: Response) => {
       message: 'Bike is retrieved successfully',
       data: result,
     });
-  } catch (error) {
-    console.log(error);
-    // return res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

@@ -6,16 +6,16 @@ import { orderValidationSchema } from './order.validation';
 const createOrder = async (req: Request, res: Response) => {
   try {
     const { order } = req.body;
-    const { value } = orderValidationSchema.validate(order);
+    const { error, value } = orderValidationSchema.validate(order);
 
     // error handling
-    // if (error) {
-    //   return res.status(500).json({
-    //     success: false,
-    //     message: 'Validation failed',
-    //     error: error.details,
-    //   });
-    // }
+    if (error) {
+      res.status(500).json({
+        success: false,
+        message: 'Validation failed',
+        error: error.details,
+      });
+    }
 
     const result = await OrderService.createOrderIntoDB(value);
     res.status(200).json({
@@ -24,16 +24,19 @@ const createOrder = async (req: Request, res: Response) => {
       data: result,
     });
   } catch (error: any) {
-    // if (
-    //   error instanceof Error &&
-    //   error.message === 'Insufficient stock. The order cannot be placed.'
-    // ) {
-    //   return res.status(500).json({
-    //     success: false,
-    //     message: error.message,
-    //   });
-    // }
-    console.log(error);
+    res.status(500).json({
+      success: false,
+      message: 'Insufficient stock. The order cannot be placed',
+    });
+    if (
+      error instanceof Error &&
+      error.message === 'Insufficient stock. The order cannot be placed.'
+    ) {
+      res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
   }
 };
 const orderRevenue = async (req: Request, res: Response) => {
@@ -43,12 +46,11 @@ const orderRevenue = async (req: Request, res: Response) => {
       success: true,
       result,
     });
-  } catch (error) {
-    console.log(error);
-    // return res.status(500).json({
-    //   success: false,
-    //   message: error.message,
-    // });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
