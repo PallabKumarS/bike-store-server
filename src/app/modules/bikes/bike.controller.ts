@@ -85,6 +85,7 @@ const updateBike = async (req: Request, res: Response) => {
   try {
     const id = req.params.productId;
     const { bike } = req.body;
+    console.log(id, bike);
     const result = await BikeService.updateBikeIntoDB(id, bike);
     res.status(200).json({
       success: true,

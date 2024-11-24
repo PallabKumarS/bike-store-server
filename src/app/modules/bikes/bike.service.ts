@@ -27,7 +27,7 @@ const getSingleBikeFromDB = async (id: string) => {
   return result;
 };
 
-const updateBikeIntoDB = async (id: string, bike: TBike) => {
+const updateBikeIntoDB = async (id: string, bike: Partial<TBike>) => {
   const result = await BikeModel.findOneAndUpdate({ _id: id }, bike, {
     new: true,
   });
