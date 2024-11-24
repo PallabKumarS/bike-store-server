@@ -13,7 +13,7 @@ const createOrderIntoDB = async (order: TOrder) => {
     throw new Error('Insufficient stock. The order cannot be placed.');
   }
 
-  const updatedBike = await BikeModel.findOneAndUpdate(
+  await BikeModel.findOneAndUpdate(
     { _id: order.product },
     {
       quantity: remainingQuantity > 0 ? remainingQuantity : 0,
@@ -23,7 +23,7 @@ const createOrderIntoDB = async (order: TOrder) => {
   );
   const result = await OrderModel.create(order);
 
-  return { result, updatedBike };
+  return result;
 };
 
 const calculateTotalRevenue = async () => {
