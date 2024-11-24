@@ -26,7 +26,7 @@ const createOrder = async (req: Request, res: Response) => {
   } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: 'Insufficient stock. The order cannot be placed',
+      message: error.message,
     });
     if (
       error instanceof Error &&
