@@ -11,6 +11,17 @@ const getAllBikesFromDB = async () => {
   return result;
 };
 
+const getBikeBySearchTerm = async (searchTerm: string) => {
+  const result = await BikeModel.find({
+    $or: [
+      { name: { $regex: searchTerm, $options: 'i' } },
+      { category: { $regex: searchTerm, $options: 'i' } },
+      { category: { $regex: searchTerm, $options: 'i' } },
+    ],
+  });
+  return result;
+};
+
 const getSingleBikeFromDB = async (id: string) => {
   const result = await BikeModel.findOne({ _id: id });
   return result;
@@ -34,4 +45,5 @@ export const BikeService = {
   getSingleBikeFromDB,
   updateBikeIntoDB,
   deleteBikeFromDB,
+  getBikeBySearchTerm,
 };
