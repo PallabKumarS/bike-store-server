@@ -6,7 +6,7 @@ import { bikeValidationSchema } from './bike.validation';
 // create bike
 const createBike = async (req: Request, res: Response) => {
   try {
-    const { bike } = req.body;
+    const bike = req.body;
     const { error, value } = bikeValidationSchema.validate(bike);
 
     // error handling
