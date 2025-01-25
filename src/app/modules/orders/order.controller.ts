@@ -1,58 +1,27 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response } from 'express';
 import { OrderService } from './order.service';
-import { orderValidationSchema } from './order.validation';
+import catchAsync from '../../utils/catchAsync';
 
-const createOrder = async (req: Request, res: Response) => {
-  try {
-    const { order } = req.body;
-    const { error, value } = orderValidationSchema.validate(order);
+// create order
+const createOrder = catchAsync(async (req: Request, res: Response) => {
+  const result = await OrderService.createOrderIntoDB(req.body);
+  res.status(200).json({
+    success: true,
+    message: 'Order created successfully',
+    data: result,
+  });
+});
 
-    // error handling
-    if (error) {
-      res.status(500).json({
-        success: false,
-        message: 'Validation failed',
-        error: error.details,
-      });
-    }
 
-    const result = await OrderService.createOrderIntoDB(value);
-    res.status(200).json({
-      success: true,
-      message: 'Order is created successfully',
-      data: result,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-    if (
-      error instanceof Error &&
-      error.message === 'Insufficient stock. The order cannot be placed.'
-    ) {
-      res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  }
-};
-const orderRevenue = async (req: Request, res: Response) => {
-  try {
-    const result = await OrderService.calculateTotalRevenue();
-    res.status(200).json({
-      success: true,
-      result,
-    });
-  } catch (error: any) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+const orderRevenue = catchAsync(async (req: Request, res: Response) => {
+  const result = await OrderService.calculateTotalRevenue();
+  res.status(200).json({
+    success: true,
+    message: 'Order revenue calculated successfully',
+    data: result,
+  });
+});
 
 export const OrderController = {
   createOrder,

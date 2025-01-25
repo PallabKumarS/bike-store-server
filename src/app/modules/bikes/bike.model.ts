@@ -1,5 +1,5 @@
 import { Schema, model } from 'mongoose';
-import { TBike } from './bike.interface';
+import { IBike, TBike } from './bike.interface';
 
 const bikeSchema = new Schema<TBike>(
   {
@@ -13,9 +13,16 @@ const bikeSchema = new Schema<TBike>(
     },
     description: { type: String, required: true },
     quantity: { type: Number, required: true },
-    inStock: { type: Boolean, required: true },
+    inStock: { type: Boolean, required: true, default: true },
+    image: { type: String },
   },
   { timestamps: true },
 );
 
-export const BikeModel = model<TBike>('Bike', bikeSchema);
+bikeSchema.statics.isBikeExists = async function (
+  id: string,
+): Promise<TBike | null> {
+  return await BikeModel.findOne({ _id: id });
+};
+
+export const BikeModel = model<TBike, IBike>('Bike', bikeSchema);

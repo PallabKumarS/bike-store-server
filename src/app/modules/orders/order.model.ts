@@ -3,12 +3,14 @@ import { TOrder } from './order.interface';
 
 const orderSchema = new Schema<TOrder>(
   {
-    email: {
-      type: String,
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
       required: true,
     },
     product: {
-      type: String,
+      type: Schema.Types.ObjectId,
+      ref: 'Bike',
       required: true,
     },
     quantity: {
@@ -18,6 +20,19 @@ const orderSchema = new Schema<TOrder>(
     totalPrice: {
       type: Number,
       required: true,
+    },
+    status: {
+      type: String,
+      enum: [
+        'pending',
+        'shipped',
+        'delivered',
+        'cancelled',
+        'processing',
+        'completed',
+        'refunded',
+      ],
+      default: 'pending',
     },
   },
   {

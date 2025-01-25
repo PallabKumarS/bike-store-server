@@ -1,37 +1,42 @@
-import Joi from 'joi';
+import { z } from 'zod';
 
-export const bikeValidationSchema = Joi.object({
-  name: Joi.string().required().messages({
-    'string.base': 'Name must be a string',
-    'any.required': 'Name is required',
-  }),
-  brand: Joi.string().required().messages({
-    'string.base': 'Brand must be a string',
-    'any.required': 'Brand is required',
-  }),
-  price: Joi.number().positive().required().messages({
-    'number.base': 'Price must be a positive number',
-    'any.required': 'Price is required',
-    'number.positive': 'Price must be a positive number',
-  }),
-  category: Joi.string()
-    .valid('Mountain', 'Road', 'Hybrid', 'Electric')
-    .required()
-    .messages({
-      'any.required': 'Category is required',
-      'any.only': 'Category must be one of Mountain, Road, Hybrid, or Electric',
+export const createBikeValidationSchema = z.object({
+  body: z.object({
+    name: z.string({
+      required_error: 'Name is required',
+      invalid_type_error: 'Name must be a string',
     }),
-  description: Joi.string().required().messages({
-    'string.base': 'Description must be a string',
-    'any.required': 'Description is required',
-  }),
-  quantity: Joi.number().integer().positive().required().messages({
-    'number.base': 'Quantity must be a positive integer',
-    'any.required': 'Quantity is required',
-    'number.positive': 'Quantity must be a positive integer',
-  }),
-  inStock: Joi.boolean().required().messages({
-    'any.required': 'inStock is required',
-    'boolean.base': 'inStock must be a boolean value',
+    brand: z.string({
+      required_error: 'Brand is required',
+      invalid_type_error: 'Brand must be a string',
+    }),
+    price: z
+      .number({
+        required_error: 'Price is required',
+        invalid_type_error: 'Price must be a positive number',
+      })
+      .positive('Price must be a positive number'),
+    category: z.enum(['Mountain', 'Road', 'Hybrid', 'Electric'], {
+      required_error: 'Category is required',
+      invalid_type_error:
+        'Category must be one of Mountain, Road, Hybrid, or Electric',
+    }),
+    description: z.string({
+      required_error: 'Description is required',
+      invalid_type_error: 'Description must be a string',
+    }),
+    quantity: z
+      .number({
+        required_error: 'Quantity is required',
+        invalid_type_error: 'Quantity must be a positive integer',
+      })
+      .int('Quantity must be an integer')
+      .positive('Quantity must be a positive integer'),
+    inStock: z.boolean({
+      required_error: 'inStock is required',
+      invalid_type_error: 'inStock must be a boolean value',
+    }),
   }),
 });
+
+export const updateBikeValidationSchema = createBikeValidationSchema.partial();

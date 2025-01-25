@@ -1,33 +1,61 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { BikeModel } from './bike.model';
 import { TBike } from './bike.interface';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { bikeSearchableFields } from './bike.constant';
+import httpStatus from 'http-status';
+import { AppError } from '../../errors/AppError';
+import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
-const createBikeIntoDB = async (bike: TBike) => {
-  const result = await BikeModel.create(bike);
-  return result;
+// create new bike here
+const createBikeIntoDB = async (file: any, bike: TBike) => {
+  try {
+    //send image to cloudinary
+    const imageName = `${bike.name}${bike?.brand}`;
+    const path = file?.path;
+    const result = await sendImageToCloudinary(imageName, path);
+    const secure_url = (result as { secure_url: string }).secure_url;
+    bike.image = secure_url;
+
+    const newBike = await BikeModel.create(bike);
+    return newBike;
+  } catch (err: any) {
+    throw new Error(err);
+  }
 };
 
-const getAllBikesFromDB = async () => {
-  const result = await BikeModel.find();
-  return result;
-};
+const getAllBikesFromDB = async (query: Record<string, unknown>) => {
+  const bikeQuery = new QueryBuilder(BikeModel.find(), query)
+    .search(bikeSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
 
-const getBikeBySearchTerm = async (searchTerm: string) => {
-  const result = await BikeModel.find({
-    $or: [
-      { name: { $regex: searchTerm, $options: 'i' } },
-      { category: { $regex: searchTerm, $options: 'i' } },
-      { category: { $regex: searchTerm, $options: 'i' } },
-    ],
-  });
-  return result;
+  const data = await bikeQuery.modelQuery;
+  const meta = await bikeQuery.countTotal();
+
+  return { data, meta };
 };
 
 const getSingleBikeFromDB = async (id: string) => {
+  // checking if bike exists
+  const existingBike = BikeModel.isBikeExists(id);
+  if (!existingBike) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
+  }
+
   const result = await BikeModel.findOne({ _id: id });
   return result;
 };
 
 const updateBikeIntoDB = async (id: string, bike: Partial<TBike>) => {
+  // checking if bike exists
+  const existingBike = BikeModel.isBikeExists(id);
+  if (!existingBike) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
+  }
+
   const result = await BikeModel.findOneAndUpdate({ _id: id }, bike, {
     new: true,
   });
@@ -35,6 +63,11 @@ const updateBikeIntoDB = async (id: string, bike: Partial<TBike>) => {
 };
 
 const deleteBikeFromDB = async (id: string) => {
+  // checking if bike exists
+  const existingBike = BikeModel.isBikeExists(id);
+  if (!existingBike) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
+  }
   const result = await BikeModel.findByIdAndDelete(id);
   return result;
 };
@@ -45,5 +78,4 @@ export const BikeService = {
   getSingleBikeFromDB,
   updateBikeIntoDB,
   deleteBikeFromDB,
-  getBikeBySearchTerm,
 };

@@ -1,23 +1,32 @@
-import Joi from 'joi';
+import { z } from 'zod';
 
-// Joi schema for validating the order data
-export const orderValidationSchema = Joi.object({
-  email: Joi.string().email().required().messages({
-    'string.email': 'Email must be a valid email address',
-    'any.required': 'Email is required',
-  }),
-  product: Joi.string().required().messages({
-    'string.base': 'Product ID must be a string',
-    'any.required': 'Product ID is required',
-  }),
-  quantity: Joi.number().integer().positive().required().messages({
-    'number.base': 'Quantity must be a positive integer',
-    'any.required': 'Quantity is required',
-    'number.positive': 'Quantity must be a positive integer',
-  }),
-  totalPrice: Joi.number().positive().required().messages({
-    'number.base': 'Total Price must be a positive number',
-    'any.required': 'Total Price is required',
-    'number.positive': 'Total Price must be a positive number',
+export const orderValidationSchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'Email is required',
+        invalid_type_error: 'Email must be a valid email address',
+      })
+      .email('Email must be a valid email address'),
+
+    product: z.string({
+      required_error: 'Product ID is required',
+      invalid_type_error: 'Product ID must be a string',
+    }),
+
+    quantity: z
+      .number({
+        required_error: 'Quantity is required',
+        invalid_type_error: 'Quantity must be a positive integer',
+      })
+      .int('Quantity must be an integer')
+      .positive('Quantity must be a positive integer'),
+
+    totalPrice: z
+      .number({
+        required_error: 'Total Price is required',
+        invalid_type_error: 'Total Price must be a positive number',
+      })
+      .positive('Total Price must be a positive number'),
   }),
 });
