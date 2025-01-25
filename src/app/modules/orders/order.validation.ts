@@ -2,12 +2,10 @@ import { z } from 'zod';
 
 export const orderValidationSchema = z.object({
   body: z.object({
-    email: z
-      .string({
-        required_error: 'Email is required',
-        invalid_type_error: 'Email must be a valid email address',
-      })
-      .email('Email must be a valid email address'),
+    user: z.string({
+      required_error: 'User ID is required',
+      invalid_type_error: 'user must be a valid mongoose id',
+    }),
 
     product: z.string({
       required_error: 'Product ID is required',
@@ -28,5 +26,10 @@ export const orderValidationSchema = z.object({
         invalid_type_error: 'Total Price must be a positive number',
       })
       .positive('Total Price must be a positive number'),
+
+    image: z.string({
+      required_error: 'Image is required',
+      invalid_type_error: 'Image must be a string',
+    }),
   }),
 });

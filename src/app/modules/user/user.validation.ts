@@ -6,7 +6,22 @@ const userValidationSchema = z.object({
     .string({
       invalid_type_error: 'Password must be string',
     })
-    .max(20, { message: 'Password can not be more than 20 characters' })
+    .max(20, { message: 'Password can not be more than 20 characters' }),
+});
+
+const createUserValidationSchema = z.object({
+  body: z.object({
+    password: userValidationSchema.shape.password,
+    role: z.enum(['admin', 'customer']),
+    name: z.string({
+      required_error: 'Name is required',
+    }),
+    email: z
+      .string({
+        required_error: 'Email is required',
+      })
+      .email(),
+  }),
 });
 
 const changeStatusValidationSchema = z.object({
@@ -18,4 +33,5 @@ const changeStatusValidationSchema = z.object({
 export const UserValidation = {
   userValidationSchema,
   changeStatusValidationSchema,
+  createUserValidationSchema,
 };

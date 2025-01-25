@@ -8,7 +8,7 @@ export type TBike = {
   description: string;
   quantity: number;
   inStock?: boolean;
-  image?: string;
+  image: string;
 };
 
 export interface IBike extends Model<TBike> {

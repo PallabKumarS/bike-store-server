@@ -8,7 +8,7 @@ import httpStatus from 'http-status';
 const createBike = catchAsync(async (req, res) => {
   const bike = req.body;
 
-  const result = await BikeService.createBikeIntoDB(req.file, bike);
+  const result = await BikeService.createBikeIntoDB(bike);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

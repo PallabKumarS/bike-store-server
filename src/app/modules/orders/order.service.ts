@@ -4,6 +4,7 @@ import { BikeModel } from '../bikes/bike.model';
 import { TOrder } from './order.interface';
 import { OrderModel } from './order.model';
 import mongoose from 'mongoose';
+import { generateOrderId } from '../../utils/generateID';
 
 const createOrderIntoDB = async (order: TOrder) => {
   const bikeExists = await BikeModel.isBikeExists(
@@ -40,6 +41,11 @@ const createOrderIntoDB = async (order: TOrder) => {
     }
 
     // second session to create order
+    // generate order id
+    const orderId = await generateOrderId();
+
+    order.id = orderId;
+
     const newOrder = await OrderModel.create([order], { session });
 
     if (!newOrder?.length) {

@@ -5,23 +5,11 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { bikeSearchableFields } from './bike.constant';
 import httpStatus from 'http-status';
 import { AppError } from '../../errors/AppError';
-import { sendImageToCloudinary } from '../../utils/sendImageToCloudinary';
 
 // create new bike here
-const createBikeIntoDB = async (file: any, bike: TBike) => {
-  try {
-    //send image to cloudinary
-    const imageName = `${bike.name}${bike?.brand}`;
-    const path = file?.path;
-    const result = await sendImageToCloudinary(imageName, path);
-    const secure_url = (result as { secure_url: string }).secure_url;
-    bike.image = secure_url;
-
-    const newBike = await BikeModel.create(bike);
-    return newBike;
-  } catch (err: any) {
-    throw new Error(err);
-  }
+const createBikeIntoDB = async (bike: TBike) => {
+  const newBike = await BikeModel.create(bike);
+  return newBike;
 };
 
 const getAllBikesFromDB = async (query: Record<string, unknown>) => {

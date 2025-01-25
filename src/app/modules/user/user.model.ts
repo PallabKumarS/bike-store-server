@@ -6,6 +6,10 @@ import { optional } from 'zod';
 
 const userSchema = new Schema<TUser, IUser>(
   {
+    name: {
+      type: String,
+      required: true,
+    },
     id: {
       type: String,
       required: true,
@@ -31,12 +35,12 @@ const userSchema = new Schema<TUser, IUser>(
     },
     role: {
       type: String,
-      enum: ['student', 'faculty', 'admin'],
+      enum: ['customer', 'admin'],
     },
     status: {
       type: String,
-      enum: ['in-progress', 'blocked'],
-      default: 'in-progress',
+      enum: ['active', 'blocked'],
+      default: 'active',
     },
     isDeleted: {
       type: Boolean,
@@ -65,8 +69,8 @@ userSchema.post('save', function (doc, next) {
   next();
 });
 
-userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-  return await UserModel.findOne({ id }).select('+password');
+userSchema.statics.isUserExists = async function (email: string) {
+  return await UserModel.findOne({ email }).select('+password');
 };
 
 userSchema.statics.isPasswordMatched = async function (

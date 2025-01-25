@@ -1,6 +1,7 @@
 import { Types } from 'mongoose';
 
 export type TOrder = {
+  id: string;
   user: Types.ObjectId;
   product: Types.ObjectId;
   quantity: number;

@@ -5,18 +5,12 @@ import {
   createBikeValidationSchema,
   updateBikeValidationSchema,
 } from './bike.validation';
-import { upload } from '../../utils/sendImageToCloudinary';
 
 const router = express.Router();
 
 router.get('/products', BikeController.getAllBike);
 router.post(
   '/products',
-  upload.single('file'),
-  (req: Request, res: Response, next: NextFunction) => {
-    req.body = JSON.parse(req.body.data);
-    next();
-  },
   validateRequest(createBikeValidationSchema),
   BikeController.createBike,
 );
