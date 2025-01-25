@@ -3,25 +3,22 @@ import validateRequest from '../../middlewares/validateRequest';
 import { USER_ROLE } from './user.constant';
 import { UserValidation } from './user.validation';
 import { UserControllers } from './user.controller';
+import auth from '../../middlewares/auth';
 
 const router = express.Router();
 
 router.post(
-  '/create-user',
-  //   auth(USER_ROLE.admin),
+  'users/create-user',
+  auth(USER_ROLE.admin),
   validateRequest(UserValidation.createUserValidationSchema),
   UserControllers.createUser,
 );
 
-router.get(
-  '/me',
-  //  auth('customer', 'admin'),
-  UserControllers.getMe,
-);
+router.get('users/me', auth('customer', 'admin'), UserControllers.getMe);
 
 router.post(
-  '/change-status/:id',
-  //   auth('admin'),
+  'users/change-status/:id',
+  auth('admin'),
   validateRequest(UserValidation.changeStatusValidationSchema),
   UserControllers.changeStatus,
 );

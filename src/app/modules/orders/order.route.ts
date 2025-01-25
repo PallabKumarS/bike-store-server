@@ -10,6 +10,7 @@ router.post(
   validateRequest(orderValidationSchema),
   OrderController.createOrder,
 );
+
 router.get('/orders/revenue', OrderController.orderRevenue);
 
 router.get('/orders');
