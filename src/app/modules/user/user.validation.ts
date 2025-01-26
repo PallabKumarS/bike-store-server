@@ -2,17 +2,14 @@ import { z } from 'zod';
 import { UserStatus } from './user.constant';
 
 const userValidationSchema = z.object({
-  password: z
-    .string({
-      invalid_type_error: 'Password must be string',
-    })
-    .max(20, { message: 'Password can not be more than 20 characters' }),
+  password: z.string({
+    invalid_type_error: 'Password must be string',
+  }),
 });
 
 const createUserValidationSchema = z.object({
   body: z.object({
     password: userValidationSchema.shape.password,
-    role: z.enum(['admin', 'customer']),
     name: z.string({
       required_error: 'Name is required',
     }),

@@ -1,6 +1,8 @@
 {
-  "name": "bike-store",
+  "name": "bike-store-server",
   "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
     "@types/cookie-parser": "^1.4.8",
@@ -26,6 +28,9 @@
     "prettier:fix": "npx prettier --write src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cloudinary": "^2.5.1",

@@ -27,16 +27,16 @@ const createOrderIntoDB = async (order: TOrder) => {
 
   try {
     // create a user (first transaction)
-    const newBike = await BikeModel.findOneAndUpdate(
+    const updatedBike = await BikeModel.findOneAndUpdate(
       { _id: order.product },
       {
-        quantity: remainingQuantity > 0 ? remainingQuantity : 0,
+        quantity: remainingQuantity,
         inStock: remainingQuantity > 0 ? true : false,
       },
       { new: true, session },
     );
 
-    if (!newBike) {
+    if (!updatedBike) {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update bike stock');
     }
 
@@ -49,7 +49,7 @@ const createOrderIntoDB = async (order: TOrder) => {
     const newOrder = await OrderModel.create([order], { session });
 
     if (!newOrder?.length) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create student');
+      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create order');
     }
 
     await session.commitTransaction();

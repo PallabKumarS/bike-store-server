@@ -10,16 +10,16 @@ const createUser = catchAsync(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Teacher is created successfully',
+    message: 'User is created successfully',
     data: result,
   });
 });
 
 // get personal details
 const getMe = catchAsync(async (req, res) => {
-  const { userId, role } = req.user;
+  const { email } = req.user;
 
-  const result = await UserServices.getMeFromDB(userId, role);
+  const result = await UserServices.getMeFromDB(email);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

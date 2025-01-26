@@ -6,6 +6,9 @@ import { OrderRoutes } from './app/modules/orders/order.route';
 import config from './app/config';
 import globalErrorHandler from './app/middlewares/globalErrorhandler';
 import notFound from './app/middlewares/notFound';
+import cookieParser from 'cookie-parser';
+import { UserRoutes } from './app/modules/user/user.route';
+import { AuthRoutes } from './app/modules/auth/auth.route';
 
 const app: Application = express();
 
@@ -16,10 +19,13 @@ app.use(
     credentials: true,
   }),
 );
+app.use(cookieParser());
 app.use(express.json());
 
 app.use('/api', BikeRoutes);
 app.use('/api', OrderRoutes);
+app.use('/api', UserRoutes);
+app.use('/api', AuthRoutes);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Bike Store Server Is Running');

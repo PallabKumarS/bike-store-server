@@ -1,12 +1,13 @@
 import bcrypt from 'bcrypt';
 import httpStatus from 'http-status';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import config from '../../config';
 import { TLoginUser } from './auth.interface';
-import { createToken } from './auth.utils';
+import { createToken, verifyToken } from './auth.utils';
 import { UserModel } from '../user/user.model';
 import { AppError } from '../../errors/AppError';
 
+// login user here
 const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
   const user = await UserModel.isUserExists(payload.email);
@@ -33,7 +34,7 @@ const loginUser = async (payload: TLoginUser) => {
   //checking if the password is correct
 
   if (!(await UserModel.isPasswordMatched(payload?.password, user?.password))) {
-    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not match');
   }
 
   //create token and sent to the  client
@@ -62,6 +63,7 @@ const loginUser = async (payload: TLoginUser) => {
   };
 };
 
+// change password here
 const changePassword = async (
   userData: JwtPayload,
   payload: { oldPassword: string; newPassword: string },
@@ -117,12 +119,10 @@ const changePassword = async (
   return null;
 };
 
+// refresh token here service here
 const refreshToken = async (token: string) => {
   // checking if the given token is valid
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string,
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
   const { email, iat } = decoded;
 

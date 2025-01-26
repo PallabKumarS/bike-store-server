@@ -1,17 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose from 'mongoose';
-import config from '../../config';
 import { TUser } from './user.interface';
 import { UserModel } from './user.model';
-import httpStatus from 'http-status';
-import { AppError } from '../../errors/AppError';
 import { generateUserId } from '../../utils/generateID';
 
 // create teacher into db
 const createUserIntoDB = async (payload: Partial<TUser>) => {
-  // if password is not given, use default password
-  payload.password = payload.password || (config.default_password as string);
-
   // set generated id
   payload.id = await generateUserId();
 
@@ -22,8 +15,8 @@ const createUserIntoDB = async (payload: Partial<TUser>) => {
 };
 
 // get personal details from db
-const getMeFromDB = async (userId: string, role: string) => {
-  const result = await UserModel.findOne({ id: userId });
+const getMeFromDB = async (email: string) => {
+  const result = await UserModel.findOne({ email });
   return result;
 };
 
