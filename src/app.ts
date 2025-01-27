@@ -15,7 +15,11 @@ const app: Application = express();
 // parsers
 app.use(
   cors({
-    origin: [config.local_client as string, config.client as string],
+    origin: [
+      (config.local_client as string) ||
+        'https://pks-bike-store-client.vercel.app',
+      (config.client as string) || 'http://localhost:5173',
+    ],
     credentials: true,
   }),
 );

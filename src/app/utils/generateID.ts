@@ -8,14 +8,14 @@ export const generateOrderId = async () => {
       .sort({ createdAt: -1 })
       .lean();
 
-    return lastOrder?.id; // Return the full id (e.g., "Order-XXXX") without substring
+    return lastOrder?.orderId;
   };
 
   let currentId = '0';
   const lastOrderId = await findLastOrderId();
 
   if (lastOrderId) {
-    currentId = lastOrderId.substring(6); // Extract numeric part after "Order-"
+    currentId = lastOrderId.substring(6);
   }
 
   const incrementId = `Order-${(Number(currentId) + 1).toString().padStart(4, '0')}`;
@@ -29,14 +29,14 @@ export const generateUserId = async () => {
       .sort({ createdAt: -1 })
       .lean();
 
-    return lastUser?.id ? lastUser.id : undefined; // No substring here
+    return lastUser?.userId ? lastUser.userId : undefined;
   };
 
   let currentId = '0';
   const lastUserId = await findLastUserId();
 
   if (lastUserId) {
-    currentId = lastUserId.substring(5); // Extract the numeric part after 'User-'
+    currentId = lastUserId.substring(5);
   }
 
   const incrementId = `User-${(Number(currentId) + 1).toString().padStart(4, '0')}`;
