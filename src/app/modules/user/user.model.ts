@@ -2,7 +2,6 @@ import bcrypt from 'bcrypt';
 import { Schema, model } from 'mongoose';
 import config from '../../config';
 import { IUser, TUser } from './user.interface';
-import { optional } from 'zod';
 
 const userSchema = new Schema<TUser, IUser>(
   {
@@ -10,7 +9,7 @@ const userSchema = new Schema<TUser, IUser>(
       type: String,
       required: true,
     },
-    id: {
+    userId: {
       type: String,
       required: true,
       unique: true,
@@ -27,11 +26,6 @@ const userSchema = new Schema<TUser, IUser>(
     },
     passwordChangedAt: {
       type: Date,
-      optional,
-    },
-    needsPasswordChange: {
-      type: Boolean,
-      default: true,
     },
     role: {
       type: String,

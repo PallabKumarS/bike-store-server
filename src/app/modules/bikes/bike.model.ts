@@ -8,7 +8,7 @@ const bikeSchema = new Schema<TBike>(
     price: { type: Number, required: true },
     category: {
       type: String,
-      enum: ['Mountain', 'Road', 'Hybrid', 'Electric'],
+      enum: ['Mountain', 'Sport', 'Hybrid', 'Electric'],
       required: true,
     },
     description: { type: String, required: true },

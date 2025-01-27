@@ -1,11 +1,12 @@
 import { Types } from 'mongoose';
 
 export type TOrder = {
-  id: string;
-  user: Types.ObjectId;
+  orderId: string;
+  userId: string;
   product: Types.ObjectId;
   quantity: number;
   totalPrice: number;
+  address: string;
   status?:
     | 'pending'
     | 'shipped'

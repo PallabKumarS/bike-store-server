@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { FilterQuery, Query } from 'mongoose';
 
 class QueryBuilder<T> {
@@ -25,6 +26,7 @@ class QueryBuilder<T> {
     return this;
   }
 
+  // filter here for filtering
   filter() {
     const queryObj = { ...this.query }; // copy
 
@@ -33,14 +35,43 @@ class QueryBuilder<T> {
 
     excludeFields.forEach((el) => delete queryObj[el]);
 
+    if (typeof queryObj.brand === 'string') {
+      queryObj.brand = {
+        $in: queryObj.brand
+          .split(',')
+          .map((brand) => new RegExp(`^${brand}$`, 'i')),
+      };
+    }
+
+    if (typeof queryObj.category === 'string') {
+      queryObj.category = {
+        $in: queryObj.category
+          .split(',')
+          .map((category) => new RegExp(`^${category}$`, 'i')),
+      };
+    }
+
+    if ('minPrice' in queryObj || 'maxPrice' in queryObj) {
+      const priceFilter: { $gte?: number; $lte?: number } = {};
+      if ('minPrice' in queryObj) priceFilter.$gte = Number(queryObj.minPrice);
+      if ('maxPrice' in queryObj) priceFilter.$lte = Number(queryObj.maxPrice);
+
+      (queryObj as any).price = priceFilter;
+
+      delete queryObj.minPrice;
+      delete queryObj.maxPrice;
+    }
+
     this.modelQuery = this.modelQuery.find(queryObj as FilterQuery<T>);
 
     return this;
   }
 
+  // sorting here
   sort() {
     const sort =
       (this?.query?.sort as string)?.split(',')?.join(' ') || '-createdAt';
+
     this.modelQuery = this.modelQuery.sort(sort as string);
 
     return this;

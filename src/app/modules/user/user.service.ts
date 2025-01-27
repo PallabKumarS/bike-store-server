@@ -6,7 +6,7 @@ import { generateUserId } from '../../utils/generateID';
 // create teacher into db
 const createUserIntoDB = async (payload: Partial<TUser>) => {
   // set generated id
-  payload.id = await generateUserId();
+  payload.userId = await generateUserId();
 
   // create a user
   const newUser = await UserModel.create(payload);

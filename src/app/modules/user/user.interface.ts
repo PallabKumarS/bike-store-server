@@ -4,11 +4,10 @@ import { USER_ROLE } from './user.constant';
 
 export type TUser = {
   name: string;
-  id: string;
+  userId: string;
   password: string;
   email: string;
   passwordChangedAt?: Date;
-  needsPasswordChange: boolean;
   role: 'admin' | 'customer';
   status: 'active' | 'blocked';
   isDeleted: boolean;

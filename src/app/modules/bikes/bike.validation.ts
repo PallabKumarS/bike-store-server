@@ -16,7 +16,7 @@ export const createBikeValidationSchema = z.object({
         invalid_type_error: 'Price must be a positive number',
       })
       .positive('Price must be a positive number'),
-    category: z.enum(['Mountain', 'Road', 'Hybrid', 'Electric'], {
+    category: z.enum(['Mountain', 'Sport', 'Hybrid', 'Electric'], {
       required_error: 'Category is required',
       invalid_type_error:
         'Category must be one of Mountain, Road, Hybrid, or Electric',
@@ -32,10 +32,6 @@ export const createBikeValidationSchema = z.object({
       })
       .int('Quantity must be an integer')
       .positive('Quantity must be a positive integer'),
-    inStock: z.boolean({
-      required_error: 'inStock is required',
-      invalid_type_error: 'inStock must be a boolean value',
-    }),
   }),
 });
 

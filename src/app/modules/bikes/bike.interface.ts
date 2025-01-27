@@ -4,7 +4,7 @@ export type TBike = {
   name: string;
   brand: string;
   price: number;
-  category: 'Mountain' | 'Road' | 'Hybrid' | 'Electric';
+  category: 'Mountain' | 'Hybrid' | 'Electric' | 'Sport';
   description: string;
   quantity: number;
   inStock?: boolean;

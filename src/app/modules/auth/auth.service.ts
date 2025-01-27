@@ -39,7 +39,7 @@ const loginUser = async (payload: TLoginUser) => {
 
   //create token and sent to the  client
   const jwtPayload = {
-    userId: user.id,
+    userId: user.userId,
     role: user.role,
     email: user.email,
   };
@@ -59,7 +59,6 @@ const loginUser = async (payload: TLoginUser) => {
   return {
     accessToken,
     refreshToken,
-    needsPasswordChange: user?.needsPasswordChange,
   };
 };
 
@@ -106,12 +105,10 @@ const changePassword = async (
 
   await UserModel.findOneAndUpdate(
     {
-      id: userData.userId,
-      role: userData.role,
+      userId: userData.userId,
     },
     {
       password: newHashedPassword,
-      needsPasswordChange: false,
       passwordChangedAt: new Date(),
     },
   );
@@ -157,7 +154,7 @@ const refreshToken = async (token: string) => {
   }
 
   const jwtPayload = {
-    userId: user.id,
+    userId: user.userId,
     role: user.role,
     email: user.email,
   };
