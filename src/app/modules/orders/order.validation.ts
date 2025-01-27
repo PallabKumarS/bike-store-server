@@ -2,12 +2,12 @@ import { z } from 'zod';
 
 export const orderValidationSchema = z.object({
   body: z.object({
-    user: z.string({
+    userId: z.string({
       required_error: 'User ID is required',
       invalid_type_error: 'user must be a valid mongoose id',
     }),
 
-    product: z.string({
+    productId: z.string({
       required_error: 'Product ID is required',
       invalid_type_error: 'Product ID must be a string',
     }),
@@ -44,4 +44,3 @@ export const orderStatusValidationSchema = z.object({
     ]),
   }),
 });
-

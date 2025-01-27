@@ -19,17 +19,19 @@ router.get(
   UserControllers.getMe,
 );
 
-router.post(
-  '/users/change-status/:id',
+router.patch(
+  '/users/change-status/:userId',
   auth(USER_ROLE.admin),
   validateRequest(UserValidation.changeStatusValidationSchema),
   UserControllers.changeStatus,
 );
 
-router.get(
-  '/users',
+router.get('/users', auth(USER_ROLE.admin), UserControllers.getAllUsers);
+
+router.delete(
+  '/users/:userId',
   auth(USER_ROLE.admin),
-  UserControllers.getAllUsers,
+  UserControllers.deleteUser,
 );
 
 export const UserRoutes = router;

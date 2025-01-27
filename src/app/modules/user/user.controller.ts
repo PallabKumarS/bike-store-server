@@ -31,7 +31,7 @@ const getMe = catchAsync(async (req, res) => {
 
 // change status
 const changeStatus = catchAsync(async (req, res) => {
-  const userId = req.params.id;
+  const userId = req.params.userId;
 
   const result = await UserServices.changeStatusIntoDB(userId, req.body);
 
@@ -45,12 +45,26 @@ const changeStatus = catchAsync(async (req, res) => {
 
 // get all users controller
 const getAllUsers = catchAsync(async (req, res) => {
-  const result = await UserServices.getAllUsersFromDB();
+  const { data, meta } = await UserServices.getAllUsersFromDB(req.query);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Users are retrieved successfully',
+    data,
+    meta,
+  });
+});
+
+// delete user controller (soft delete)
+const deleteUser = catchAsync(async (req, res) => {
+  const userId = req.params.id;
+  const result = await UserServices.deleteUserFromDB(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'User is deleted successfully',
     data: result,
   });
 });
@@ -60,4 +74,5 @@ export const UserControllers = {
   getMe,
   changeStatus,
   getAllUsers,
+  deleteUser,
 };

@@ -2,11 +2,13 @@
 import { TUser } from './user.interface';
 import { UserModel } from './user.model';
 import { generateUserId } from '../../utils/generateID';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 // create teacher into db
 const createUserIntoDB = async (payload: Partial<TUser>) => {
   // set generated id
   payload.userId = await generateUserId();
+
 
   // create a user
   const newUser = await UserModel.create(payload);
@@ -32,8 +34,31 @@ const changeStatusIntoDB = async (
 };
 
 // get all users
-const getAllUsersFromDB = async () => {
-  const result = await UserModel.find({});
+const getAllUsersFromDB = async (query: Record<string, unknown>) => {
+  const userQuery = new QueryBuilder(UserModel.find(), query)
+    .filter()
+    .sort()
+    .paginate();
+
+  const data = await userQuery.modelQuery;
+  const meta = await userQuery.countTotal();
+
+  return {
+    meta,
+    data,
+  };
+};
+
+const deleteUserFromDB = async (userId: string) => {
+  const result = await UserModel.findOneAndUpdate(
+    { userId },
+    {
+      isDeleted: true,
+    },
+    {
+      new: true,
+    },
+  );
   return result;
 };
 
@@ -42,4 +67,5 @@ export const UserServices = {
   getMeFromDB,
   changeStatusIntoDB,
   getAllUsersFromDB,
+  deleteUserFromDB,
 };

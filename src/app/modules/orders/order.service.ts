@@ -5,11 +5,12 @@ import { TOrder } from './order.interface';
 import { OrderModel } from './order.model';
 import mongoose from 'mongoose';
 import { generateOrderId } from '../../utils/generateID';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 // create order into db
 const createOrderIntoDB = async (order: TOrder) => {
   const bikeExists = await BikeModel.isBikeExists(
-    order.product as unknown as string,
+    order.productId as unknown as string,
   );
   if (!bikeExists) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike not found');
@@ -29,7 +30,7 @@ const createOrderIntoDB = async (order: TOrder) => {
   try {
     // create a user (first transaction)
     const updatedBike = await BikeModel.findOneAndUpdate(
-      { _id: order.product },
+      { _id: order.productId },
       {
         quantity: remainingQuantity,
         inStock: remainingQuantity > 0 ? true : false,
@@ -122,9 +123,18 @@ const getAllMyOrdersFromDB = async (id: string) => {
 };
 
 // get all orders
-const getAllOrdersFromDB = async () => {
-  const result = await OrderModel.find({}).populate('product');
-  return result;
+const getAllOrdersFromDB = async (query: Record<string, unknown>) => {
+  const orderQuery = new QueryBuilder(OrderModel.find(), query)
+    .filter()
+    .sort()
+    .paginate();
+  const data = await orderQuery.modelQuery;
+  const meta = await orderQuery.countTotal();
+
+  return {
+    meta,
+    data,
+  };
 };
 
 // order status change

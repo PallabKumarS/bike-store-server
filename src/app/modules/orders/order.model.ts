@@ -16,7 +16,7 @@ const orderSchema = new Schema<TOrder>(
       type: String,
       required: true,
     },
-    product: {
+    productId: {
       type: Schema.Types.ObjectId,
       ref: 'Bike',
       required: true,
@@ -31,14 +31,11 @@ const orderSchema = new Schema<TOrder>(
     },
     status: {
       type: String,
-      enum: [
-        'pending',
-        'shipped',
-        'delivered',
-        'cancelled',
-        'processing',
-      ],
+      enum: ['pending', 'shipped', 'delivered', 'cancelled', 'processing'],
       default: 'pending',
+    },
+    paymentId: {
+      type: String,
     },
   },
   {

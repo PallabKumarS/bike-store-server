@@ -4,7 +4,7 @@ import { UserModel } from '../modules/user/user.model';
 // order id
 export const generateOrderId = async () => {
   const findLastOrderId = async () => {
-    const lastOrder = await OrderModel.findOne({}, { id: 1, _id: 0 })
+    const lastOrder = await OrderModel.findOne({}, { orderId: 1, _id: 0 })
       .sort({ createdAt: -1 })
       .lean();
 
@@ -25,10 +25,9 @@ export const generateOrderId = async () => {
 // user id
 export const generateUserId = async () => {
   const findLastUserId = async () => {
-    const lastUser = await UserModel.findOne({}, { id: 1, _id: 0 })
+    const lastUser = await UserModel.findOne({}, { userId: 1, _id: 0 })
       .sort({ createdAt: -1 })
       .lean();
-
     return lastUser?.userId ? lastUser.userId : undefined;
   };
 
