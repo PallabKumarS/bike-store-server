@@ -13,7 +13,7 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-
+// revenue controller
 const orderRevenue = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.calculateTotalRevenue();
   res.status(200).json({
@@ -23,7 +23,42 @@ const orderRevenue = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// get my orders controller
+const getMyOrders = catchAsync(async (req: Request, res: Response) => {
+  const result = await OrderService.getAllMyOrdersFromDB(req.user?.userId);
+  res.status(200).json({
+    success: true,
+    message: 'Orders retrieved successfully',
+    data: result,
+  });
+});
+
+// get all orders controller
+const getAllOrders = catchAsync(async (req: Request, res: Response) => {
+  const result = await OrderService.getAllOrdersFromDB();
+  res.status(200).json({
+    success: true,
+    message: 'Orders retrieved successfully',
+    data: result,
+  });
+});
+
+// change order status controller
+const changeOrderStatus = catchAsync(async (req: Request, res: Response) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+  const result = await OrderService.changeOrderStatus(orderId, status);
+  res.status(200).json({
+    success: true,
+    message: 'Order status updated successfully',
+    data: result,
+  });
+});
+
 export const OrderController = {
   createOrder,
   orderRevenue,
+  getMyOrders,
+  getAllOrders,
+  changeOrderStatus,
 };

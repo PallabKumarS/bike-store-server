@@ -13,6 +13,4 @@ export type TOrder = {
     | 'delivered'
     | 'cancelled'
     | 'processing'
-    | 'completed'
-    | 'refunded';
 };

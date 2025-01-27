@@ -3,7 +3,7 @@ import { IBike, TBike } from './bike.interface';
 
 const bikeSchema = new Schema<TBike>(
   {
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     brand: { type: String, required: true },
     price: { type: Number, required: true },
     category: {

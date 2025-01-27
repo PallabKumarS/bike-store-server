@@ -15,16 +15,25 @@ const createUserIntoDB = async (payload: Partial<TUser>) => {
 };
 
 // get personal details from db
-const getMeFromDB = async (email: string) => {
-  const result = await UserModel.findOne({ email });
+const getMeFromDB = async (userId: string) => {
+  const result = await UserModel.findOne({ userId });
   return result;
 };
 
 // change status in user
-const changeStatusIntoDB = async (id: string, payload: { status: string }) => {
-  const result = await UserModel.findByIdAndUpdate(id, payload, {
+const changeStatusIntoDB = async (
+  userId: string,
+  payload: { status: string },
+) => {
+  const result = await UserModel.findOneAndUpdate({ userId }, payload, {
     new: true,
   });
+  return result;
+};
+
+// get all users
+const getAllUsersFromDB = async () => {
+  const result = await UserModel.find({});
   return result;
 };
 
@@ -32,4 +41,5 @@ export const UserServices = {
   createUserIntoDB,
   getMeFromDB,
   changeStatusIntoDB,
+  getAllUsersFromDB,
 };

@@ -31,9 +31,11 @@ app.use('/api', OrderRoutes);
 app.use('/api', UserRoutes);
 app.use('/api', AuthRoutes);
 
-app.get('/', (req: Request, res: Response) => {
-  res.send('Bike Store Server Is Running');
-});
+const test = (req: Request, res: Response) => {
+  res.send('Server is running');
+};
+
+app.get('/', test);
 
 app.use(globalErrorHandler);
 

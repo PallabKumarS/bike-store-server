@@ -17,9 +17,9 @@ const createUser = catchAsync(async (req, res) => {
 
 // get personal details
 const getMe = catchAsync(async (req, res) => {
-  const { email } = req.user;
+  const { userId } = req.user;
 
-  const result = await UserServices.getMeFromDB(email);
+  const result = await UserServices.getMeFromDB(userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -31,9 +31,9 @@ const getMe = catchAsync(async (req, res) => {
 
 // change status
 const changeStatus = catchAsync(async (req, res) => {
-  const id = req.params.id;
+  const userId = req.params.id;
 
-  const result = await UserServices.changeStatusIntoDB(id, req.body);
+  const result = await UserServices.changeStatusIntoDB(userId, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -43,8 +43,21 @@ const changeStatus = catchAsync(async (req, res) => {
   });
 });
 
+// get all users controller
+const getAllUsers = catchAsync(async (req, res) => {
+  const result = await UserServices.getAllUsersFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Users are retrieved successfully',
+    data: result,
+  });
+});
+
 export const UserControllers = {
   createUser,
   getMe,
   changeStatus,
+  getAllUsers,
 };

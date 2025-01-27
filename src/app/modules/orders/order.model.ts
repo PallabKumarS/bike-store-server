@@ -37,8 +37,6 @@ const orderSchema = new Schema<TOrder>(
         'delivered',
         'cancelled',
         'processing',
-        'completed',
-        'refunded',
       ],
       default: 'pending',
     },

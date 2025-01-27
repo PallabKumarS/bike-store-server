@@ -6,6 +6,7 @@ import { OrderModel } from './order.model';
 import mongoose from 'mongoose';
 import { generateOrderId } from '../../utils/generateID';
 
+// create order into db
 const createOrderIntoDB = async (order: TOrder) => {
   const bikeExists = await BikeModel.isBikeExists(
     order.product as unknown as string,
@@ -63,6 +64,7 @@ const createOrderIntoDB = async (order: TOrder) => {
   }
 };
 
+// calculate total revenue
 const calculateTotalRevenue = async () => {
   const result = await OrderModel.aggregate([
     // stage 1
@@ -113,7 +115,32 @@ const calculateTotalRevenue = async () => {
   }
 };
 
+// get all user orders
+const getAllMyOrdersFromDB = async (id: string) => {
+  const result = await OrderModel.find({ userId: id }).populate('product');
+  return result;
+};
+
+// get all orders
+const getAllOrdersFromDB = async () => {
+  const result = await OrderModel.find({}).populate('product');
+  return result;
+};
+
+// order status change
+const changeOrderStatus = async (orderId: string, status: string) => {
+  const result = await OrderModel.findOneAndUpdate(
+    { orderId: orderId },
+    { status },
+    { new: true },
+  );
+  return result;
+};
+
 export const OrderService = {
   createOrderIntoDB,
   calculateTotalRevenue,
+  getAllMyOrdersFromDB,
+  getAllOrdersFromDB,
+  changeOrderStatus,
 };
