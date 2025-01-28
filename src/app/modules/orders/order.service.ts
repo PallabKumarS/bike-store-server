@@ -152,9 +152,10 @@ const changeOrderStatus = async (orderId: string, status: string) => {
   if (
     orderExists.status === 'paid' ||
     orderExists.status === 'delivered' ||
-    orderExists.status == 'shipped'
+    orderExists.status == 'shipped' ||
+    orderExists.status == 'processing'
   ) {
-    if (status === 'pending' || status === 'processing') {
+    if (status === 'pending' || status === 'canceled') {
       throw new AppError(
         httpStatus.BAD_REQUEST,
         `Order already ${orderExists.status}`,
