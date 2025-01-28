@@ -41,6 +41,7 @@ export const orderStatusValidationSchema = z.object({
       'delivered',
       'processing',
       'cancelled',
+      'paid',
     ]),
   }),
 });

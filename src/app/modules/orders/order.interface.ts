@@ -1,4 +1,4 @@
-import { Types } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TOrder = {
   orderId: string;
@@ -7,6 +7,17 @@ export type TOrder = {
   quantity: number;
   totalPrice: number;
   address: string;
-  status?: 'pending' | 'shipped' | 'delivered' | 'cancelled' | 'processing';
+  status?:
+    | 'pending'
+    | 'shipped'
+    | 'delivered'
+    | 'cancelled'
+    | 'processing'
+    | 'paid';
   paymentId?: string;
 };
+
+export interface IOrder extends Model<TOrder> {
+  // eslint-disable-next-line no-unused-vars
+  isBikeExists(id: string): Promise<TOrder | null>;
+}

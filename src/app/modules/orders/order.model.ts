@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
-import { TOrder } from './order.interface';
+import { IOrder, TOrder } from './order.interface';
 
-const orderSchema = new Schema<TOrder>(
+const orderSchema = new Schema<TOrder, IOrder>(
   {
     orderId: {
       type: String,
@@ -31,7 +31,14 @@ const orderSchema = new Schema<TOrder>(
     },
     status: {
       type: String,
-      enum: ['pending', 'shipped', 'delivered', 'cancelled', 'processing'],
+      enum: [
+        'pending',
+        'shipped',
+        'delivered',
+        'cancelled',
+        'processing',
+        'paid',
+      ],
       default: 'pending',
     },
     paymentId: {
@@ -43,4 +50,10 @@ const orderSchema = new Schema<TOrder>(
   },
 );
 
-export const OrderModel = model<TOrder>('Order', orderSchema);
+orderSchema.statics.isBikeExists = async function (
+  id: Schema.Types.ObjectId,
+): Promise<TOrder | null> {
+  return await OrderModel.findOne({ orderId: id });
+};
+
+export const OrderModel = model<TOrder, IOrder>('Order', orderSchema);

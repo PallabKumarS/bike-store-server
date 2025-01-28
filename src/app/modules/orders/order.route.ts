@@ -34,4 +34,6 @@ router.patch(
   OrderController.changeOrderStatus,
 );
 
+router.get('/orders/:orderId', OrderController.getSingleOrder);
+
 export const OrderRoutes = router;

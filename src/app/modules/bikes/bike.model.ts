@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import { IBike, TBike } from './bike.interface';
 
-const bikeSchema = new Schema<TBike>(
+const bikeSchema = new Schema<TBike, IBike>(
   {
     name: { type: String, required: true, unique: true },
     brand: { type: String, required: true },

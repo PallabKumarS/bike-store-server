@@ -2,11 +2,15 @@
 import { Request, Response } from 'express';
 import { OrderService } from './order.service';
 import catchAsync from '../../utils/catchAsync';
+import sendResponse from '../../utils/sendResponse';
+import httpStatus from 'http-status';
 
 // create order
 const createOrder = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.createOrderIntoDB(req.body);
-  res.status(200).json({
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Order created successfully',
     data: result,
@@ -16,9 +20,22 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
 // revenue controller
 const orderRevenue = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.calculateTotalRevenue();
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Order revenue calculated successfully',
+    message: 'Order revenue retrieved successfully',
+    data: result,
+  });
+});
+
+// get single order controller
+const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
+  const { orderId } = req.params;
+  const result = await OrderService.getSingleOrderFromDB(orderId);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Order retrieved successfully',
     data: result,
   });
 });
@@ -26,9 +43,10 @@ const orderRevenue = catchAsync(async (req: Request, res: Response) => {
 // get my orders controller
 const getMyOrders = catchAsync(async (req: Request, res: Response) => {
   const result = await OrderService.getAllMyOrdersFromDB(req.user?.userId);
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
-    message: 'Orders retrieved successfully',
+    message: 'Your orders retrieved successfully',
     data: result,
   });
 });
@@ -36,7 +54,8 @@ const getMyOrders = catchAsync(async (req: Request, res: Response) => {
 // get all orders controller
 const getAllOrders = catchAsync(async (req: Request, res: Response) => {
   const { data, meta } = await OrderService.getAllOrdersFromDB(req.query);
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Orders retrieved successfully',
     data,
@@ -49,7 +68,8 @@ const changeOrderStatus = catchAsync(async (req: Request, res: Response) => {
   const { orderId } = req.params;
   const { status } = req.body;
   const result = await OrderService.changeOrderStatus(orderId, status);
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
     success: true,
     message: 'Order status updated successfully',
     data: result,
@@ -62,4 +82,5 @@ export const OrderController = {
   getMyOrders,
   getAllOrders,
   changeOrderStatus,
+  getSingleOrder,
 };

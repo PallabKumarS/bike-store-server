@@ -114,6 +114,12 @@ const calculateTotalRevenue = async () => {
   }
 };
 
+// get single order
+const getSingleOrderFromDB = async (orderId: string) => {
+  const result = await OrderModel.findOne({ orderId }).populate('productId');
+  return result;
+};
+
 // get all user orders
 const getAllMyOrdersFromDB = async (userId: string) => {
   const result = await OrderModel.find({ userId }).populate('productId');
@@ -137,6 +143,41 @@ const getAllOrdersFromDB = async (query: Record<string, unknown>) => {
 
 // order status change
 const changeOrderStatus = async (orderId: string, status: string) => {
+  const orderExists = await OrderModel.findOne({ orderId });
+
+  if (!orderExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+
+  if (
+    orderExists.status === 'paid' ||
+    orderExists.status === 'delivered' ||
+    orderExists.status == 'shipped'
+  ) {
+    if (status === 'pending' || status === 'processing') {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Order already ${orderExists.status}`,
+      );
+    }
+  }
+
+  if (orderExists.status === 'shipped') {
+    if (status !== 'delivered') {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Order already ${orderExists.status}`,
+      );
+    }
+  }
+
+  if (orderExists.status === 'delivered') {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      `Order already ${orderExists.status}`,
+    );
+  }
+
   const result = await OrderModel.findOneAndUpdate(
     { orderId: orderId },
     { status },
@@ -151,4 +192,5 @@ export const OrderService = {
   getAllMyOrdersFromDB,
   getAllOrdersFromDB,
   changeOrderStatus,
+  getSingleOrderFromDB,
 };
