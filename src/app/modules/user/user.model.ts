@@ -37,6 +37,13 @@ const userSchema = new Schema<TUser, IUser>(
       enum: ['active', 'blocked'],
       default: 'active',
     },
+
+    phone: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,

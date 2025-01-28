@@ -14,10 +14,18 @@ export type TOrder = {
     | 'cancelled'
     | 'processing'
     | 'paid';
-  paymentId?: string;
+  transaction?: {
+    paymentId?: string;
+    transactionStatus?: string;
+    bank_status?: string;
+    sp_code?: string;
+    sp_message?: string;
+    method?: string;
+    date_time?: string;
+  };
 };
 
 export interface IOrder extends Model<TOrder> {
   // eslint-disable-next-line no-unused-vars
-  isBikeExists(id: string): Promise<TOrder | null>;
+  isOrderExists(id: string): Promise<TOrder | null>;
 }

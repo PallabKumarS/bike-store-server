@@ -36,4 +36,6 @@ router.patch(
 
 router.get('/orders/:orderId', OrderController.getSingleOrder);
 
+router.get('/verify-payment/:paymentId', OrderController.verifyPayment);
+
 export const OrderRoutes = router;

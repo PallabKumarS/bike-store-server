@@ -41,8 +41,28 @@ const orderSchema = new Schema<TOrder, IOrder>(
       ],
       default: 'pending',
     },
-    paymentId: {
-      type: String,
+    transaction: {
+      paymentId: {
+        type: String,
+      },
+      transactionStatus: {
+        type: String,
+      },
+      bank_status: {
+        type: String,
+      },
+      sp_code: {
+        type: String,
+      },
+      sp_message: {
+        type: String,
+      },
+      method: {
+        type: String,
+      },
+      date_time: {
+        type: String,
+      },
     },
   },
   {
@@ -50,8 +70,8 @@ const orderSchema = new Schema<TOrder, IOrder>(
   },
 );
 
-orderSchema.statics.isBikeExists = async function (
-  id: Schema.Types.ObjectId,
+orderSchema.statics.isOrderExists = async function (
+  id: string,
 ): Promise<TOrder | null> {
   return await OrderModel.findOne({ orderId: id });
 };

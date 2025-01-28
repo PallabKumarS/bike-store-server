@@ -11,6 +11,7 @@ export type TUser = {
   role: 'admin' | 'customer';
   status: 'active' | 'blocked';
   isDeleted: boolean;
+  phone?: string;
 };
 
 export interface IUser extends Model<TUser> {

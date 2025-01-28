@@ -7,12 +7,26 @@ import httpStatus from 'http-status';
 
 // create order
 const createOrder = catchAsync(async (req: Request, res: Response) => {
-  const result = await OrderService.createOrderIntoDB(req.body);
+  const result = await OrderService.createOrderIntoDB(req.body, req.ip!);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: 'Order created successfully',
+    message: 'Order placed successfully. Please make payment.',
+    data: result,
+  });
+});
+
+// verify payment and update order status
+const verifyPayment = catchAsync(async (req: Request, res: Response) => {
+  const { paymentId } = req.params;
+
+  const result = await OrderService.verifyPayment(paymentId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Payment verified successfully',
     data: result,
   });
 });
@@ -83,4 +97,5 @@ export const OrderController = {
   getAllOrders,
   changeOrderStatus,
   getSingleOrder,
+  verifyPayment,
 };
