@@ -12,7 +12,6 @@ const loginUser = async (payload: TLoginUser) => {
   // checking if the user is exist
   const user = await UserModel.isUserExists(payload.email);
 
-
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
   }
@@ -29,7 +28,7 @@ const loginUser = async (payload: TLoginUser) => {
   const userStatus = user?.status;
 
   if (userStatus === 'blocked') {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is blocked ! !');
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deactivated ! !');
   }
 
   //checking if the password is correct

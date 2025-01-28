@@ -3,9 +3,19 @@ import { TUser } from './user.interface';
 import { UserModel } from './user.model';
 import { generateUserId } from '../../utils/generateID';
 import QueryBuilder from '../../builder/QueryBuilder';
+import { AppError } from '../../errors/AppError';
+import httpStatus from 'http-status';
 
 // create teacher into db
 const createUserIntoDB = async (payload: Partial<TUser>) => {
+  const isEmailExist = await UserModel.findOne({ email: payload.email });
+  if (isEmailExist) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      'Email already exist. Login instead.',
+    );
+  }
+
   // set generated id
   payload.userId = await generateUserId();
 
