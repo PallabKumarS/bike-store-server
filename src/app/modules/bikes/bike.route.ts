@@ -34,4 +34,6 @@ router.delete(
   BikeController.deleteBike,
 );
 
+router.get('/products-brands', BikeController.getBrands);
+
 export const BikeRoutes = router;

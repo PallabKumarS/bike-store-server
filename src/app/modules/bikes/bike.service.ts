@@ -5,6 +5,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 import { bikeSearchableFields } from './bike.constant';
 import httpStatus from 'http-status';
 import { AppError } from '../../errors/AppError';
+import { Types } from 'mongoose';
 
 // create new bike here
 const createBikeIntoDB = async (bike: TBike) => {
@@ -12,6 +13,7 @@ const createBikeIntoDB = async (bike: TBike) => {
   return newBike;
 };
 
+// get all bikes
 const getAllBikesFromDB = async (query: Record<string, unknown>) => {
   const bikeQuery = new QueryBuilder(BikeModel.find(), query)
     .search(bikeSearchableFields)
@@ -28,7 +30,7 @@ const getAllBikesFromDB = async (query: Record<string, unknown>) => {
 
 const getSingleBikeFromDB = async (id: string) => {
   // checking if bike exists
-  const existingBike = BikeModel.isBikeExists(id);
+  const existingBike = BikeModel.isBikeExists(new Types.ObjectId(id));
   if (!existingBike) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
   }
@@ -37,9 +39,10 @@ const getSingleBikeFromDB = async (id: string) => {
   return result;
 };
 
+// update bike into db
 const updateBikeIntoDB = async (id: string, bike: Partial<TBike>) => {
   // checking if bike exists
-  const existingBike = BikeModel.isBikeExists(id);
+  const existingBike = BikeModel.isBikeExists(new Types.ObjectId(id));
   if (!existingBike) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
   }
@@ -50,13 +53,21 @@ const updateBikeIntoDB = async (id: string, bike: Partial<TBike>) => {
   return result;
 };
 
+// delete bike from db
 const deleteBikeFromDB = async (id: string) => {
   // checking if bike exists
-  const existingBike = BikeModel.isBikeExists(id);
+  const existingBike = BikeModel.isBikeExists(new Types.ObjectId(id));
   if (!existingBike) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
   }
   const result = await BikeModel.findByIdAndDelete(id);
+  return result;
+};
+
+// get brands from db
+const getBrandsFromDB = async () => {
+  const result = await BikeModel.distinct('brand');
+
   return result;
 };
 
@@ -66,4 +77,5 @@ export const BikeService = {
   getSingleBikeFromDB,
   updateBikeIntoDB,
   deleteBikeFromDB,
+  getBrandsFromDB,
 };

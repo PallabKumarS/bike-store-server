@@ -9,7 +9,6 @@ const createUserIntoDB = async (payload: Partial<TUser>) => {
   // set generated id
   payload.userId = await generateUserId();
 
-
   // create a user
   const newUser = await UserModel.create(payload);
 

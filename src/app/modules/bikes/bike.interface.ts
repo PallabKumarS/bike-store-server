@@ -1,4 +1,4 @@
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 export type TBike = {
   name: string;
@@ -13,5 +13,5 @@ export type TBike = {
 
 export interface IBike extends Model<TBike> {
   // eslint-disable-next-line no-unused-vars
-  isBikeExists(id: string): Promise<TBike>;
+  isBikeExists(id: Types.ObjectId): Promise<TBike>;
 }

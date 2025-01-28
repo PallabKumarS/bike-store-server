@@ -20,7 +20,7 @@ const bikeSchema = new Schema<TBike>(
 );
 
 bikeSchema.statics.isBikeExists = async function (
-  id: string,
+  id: Schema.Types.ObjectId,
 ): Promise<TBike | null> {
   return await BikeModel.findOne({ _id: id });
 };

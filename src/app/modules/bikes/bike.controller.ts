@@ -71,10 +71,24 @@ const deleteBike = catchAsync(async (req, res) => {
   });
 });
 
+// brands controller
+const getBrands = catchAsync(async (req, res) => {
+
+  const result = await BikeService.getBrandsFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Brands are retrieved successfully',
+    data: result,
+  });
+});
+
 export const BikeController = {
   createBike,
   getAllBike,
   getSingleBike,
   updateBike,
   deleteBike,
+  getBrands,
 };

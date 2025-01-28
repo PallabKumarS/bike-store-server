@@ -9,9 +9,7 @@ import QueryBuilder from '../../builder/QueryBuilder';
 
 // create order into db
 const createOrderIntoDB = async (order: TOrder) => {
-  const bikeExists = await BikeModel.isBikeExists(
-    order.productId as unknown as string,
-  );
+  const bikeExists = await BikeModel.isBikeExists(order.productId);
   if (!bikeExists) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike not found');
   }
@@ -117,8 +115,8 @@ const calculateTotalRevenue = async () => {
 };
 
 // get all user orders
-const getAllMyOrdersFromDB = async (id: string) => {
-  const result = await OrderModel.find({ userId: id }).populate('product');
+const getAllMyOrdersFromDB = async (userId: string) => {
+  const result = await OrderModel.find({ userId }).populate('productId');
   return result;
 };
 
