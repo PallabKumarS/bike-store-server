@@ -22,6 +22,7 @@ export type TOrder = {
     sp_message?: string;
     method?: string;
     date_time?: string;
+    paymentUrl?: string;
   };
 };
 

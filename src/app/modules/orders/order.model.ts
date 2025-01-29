@@ -63,6 +63,9 @@ const orderSchema = new Schema<TOrder, IOrder>(
       date_time: {
         type: String,
       },
+      paymentUrl: {
+        type: String,
+      },
     },
   },
   {

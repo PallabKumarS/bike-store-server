@@ -8,6 +8,8 @@ import { generateOrderId } from '../../utils/generateID';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { UserModel } from '../user/user.model';
 import { orderUtils } from './order.utils';
+import config from '../../config';
+import mongoose from 'mongoose';
 
 // create order into db
 const createOrderIntoDB = async (order: TOrder, client_ip: string) => {
@@ -60,6 +62,7 @@ const createOrderIntoDB = async (order: TOrder, client_ip: string) => {
             transaction: {
               paymentId: payment.sp_order_id,
               transactionStatus: payment.transactionStatus,
+              paymentUrl: payment.checkout_url,
             },
           },
         },
@@ -71,10 +74,7 @@ const createOrderIntoDB = async (order: TOrder, client_ip: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update order');
     }
 
-    return {
-      order: updatedOrder,
-      payment,
-    };
+    return updatedOrder;
   } catch (err: any) {
     throw new Error(err);
   }
@@ -110,41 +110,69 @@ const verifyPayment = async (paymentId: string) => {
 
   // if the payment is successful, update the bike quantity
   if (payment[0].bank_status === 'Success') {
-    // check if order was placed before
-    const orderExists = await OrderModel.findOne({
-      'transaction.paymentId': paymentId,
-    });
+    const session = await mongoose.startSession();
+    session.startTransaction();
 
-    if (!orderExists) {
-      throw new AppError(
-        httpStatus.NOT_FOUND,
-        'Order was not placed correctly',
+    try {
+      // check if order was placed before
+      const orderExists = await OrderModel.findOne({
+        'transaction.paymentId': paymentId,
+      });
+
+      if (!orderExists) {
+        throw new AppError(
+          httpStatus.NOT_FOUND,
+          'Order was not placed correctly',
+        );
+      }
+
+      const bikeExists = await BikeModel.isBikeExists(orderExists.productId);
+
+      if (!bikeExists) {
+        throw new AppError(
+          httpStatus.NOT_FOUND,
+          'Product was not found in order',
+        );
+      }
+
+      const remainingQuantity = bikeExists.quantity - orderExists.quantity;
+
+      // update bike quantity (first transaction)
+      const updatedBike = await BikeModel.findOneAndUpdate(
+        { _id: orderExists.productId },
+        {
+          quantity: remainingQuantity,
+          inStock: remainingQuantity > 0 ? true : false,
+        },
+        { new: true, session },
       );
-    }
 
-    const bikeExists = await BikeModel.isBikeExists(orderExists.productId);
+      if (!updatedBike) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          'Failed to update bike stock',
+        );
+      }
 
-    if (!bikeExists) {
-      throw new AppError(
-        httpStatus.NOT_FOUND,
-        'Product was not found in order',
+      const updatedOrder = await OrderModel.findOneAndUpdate(
+        { 'transaction.paymentId': paymentId },
+        {
+          'transaction.paymentUrl': `${config.sp_return_url}?order_id=${paymentId}`,
+        },
+        { new: true, session },
       );
-    }
 
-    const remainingQuantity = bikeExists.quantity - orderExists.quantity;
 
-    // update bike quantity (first transaction)
-    const updatedBike = await BikeModel.findOneAndUpdate(
-      { _id: orderExists.productId },
-      {
-        quantity: remainingQuantity,
-        inStock: remainingQuantity > 0 ? true : false,
-      },
-      { new: true },
-    );
+      if (!updatedOrder) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update order');
+      }
 
-    if (!updatedBike) {
-      throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update bike stock');
+      await session.commitTransaction();
+      await session.endSession();
+    } catch (err: any) {
+      await session.abortTransaction();
+      await session.endSession();
+      throw new Error(err);
     }
   }
 
