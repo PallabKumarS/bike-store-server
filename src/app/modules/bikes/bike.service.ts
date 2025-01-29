@@ -30,7 +30,7 @@ const getAllBikesFromDB = async (query: Record<string, unknown>) => {
 
 const getSingleBikeFromDB = async (id: string) => {
   // checking if bike exists
-  const existingBike = BikeModel.isBikeExists(new Types.ObjectId(id));
+  const existingBike = await BikeModel.isBikeExists(new Types.ObjectId(id));
   if (!existingBike) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
   }
@@ -42,14 +42,21 @@ const getSingleBikeFromDB = async (id: string) => {
 // update bike into db
 const updateBikeIntoDB = async (id: string, bike: Partial<TBike>) => {
   // checking if bike exists
-  const existingBike = BikeModel.isBikeExists(new Types.ObjectId(id));
+  const existingBike = await BikeModel.isBikeExists(new Types.ObjectId(id));
   if (!existingBike) {
     throw new AppError(httpStatus.NOT_FOUND, 'Bike does not exist');
   }
 
-  const result = await BikeModel.findOneAndUpdate({ _id: id }, bike, {
-    new: true,
-  });
+
+  const result = await BikeModel.findOneAndUpdate(
+    { _id: id },
+    { $set: bike },
+    {
+      new: true,
+      runValidators: true,
+    },
+  );
+
   return result;
 };
 

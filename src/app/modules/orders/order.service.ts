@@ -147,11 +147,6 @@ const verifyPayment = async (paymentId: string) => {
       throw new AppError(httpStatus.BAD_REQUEST, 'Failed to update bike stock');
     }
   }
-  // else {
-  //   await OrderModel.findOneAndDelete({
-  //     'transaction.paymentId': paymentId,
-  //   });
-  // }
 
   return payment;
 };
@@ -163,7 +158,7 @@ const calculateTotalRevenue = async () => {
     {
       $lookup: {
         from: 'bikes',
-        localField: 'product',
+        localField: 'productId',
         foreignField: '_id',
         as: 'bikeDetails',
       },
@@ -249,6 +244,15 @@ const changeOrderStatus = async (orderId: string, status: string) => {
     orderExists.status == 'processing'
   ) {
     if (status === 'pending' || status === 'cancelled') {
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Order already ${orderExists.status}`,
+      );
+    }
+  }
+
+  if (orderExists.status === 'processing') {
+    if (status !== 'shipped' && status !== 'delivered') {
       throw new AppError(
         httpStatus.BAD_REQUEST,
         `Order already ${orderExists.status}`,
